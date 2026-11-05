@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalVoice - Conecta con el Mundo</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .translator-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .post-box {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .post-box textarea {
+            width: 100%;
+            height: 100px;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: none;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .media-inputs {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .media-inputs label {
+            cursor: pointer;
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .media-inputs label:hover {
+            background: #c7d2fe;
+        }
+
+        .media-inputs input[type="file"] {
+            display: none;
+        }
+
+        button.btn-publish {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.btn-publish:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .post-media img, .post-media audio {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .translation-tag {
+            font-size: 0.8rem;
+            color: #059669;
+            background: #ecfdf5;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🌍 GlobalVoice</div>
+        <div class="translator-controls">
+            <label for="countrySelect">Región / Idioma:</label>
+            <select id="countrySelect" onchange="changeLanguage()">
+                <option value="es">🇪🇸 Español (España/Latinoamérica)</option>
+                <option value="en">🇺🇸 English (US)</option>
+                <option value="fr">🇫🇷 Français (France)</option>
+                <option value="ja">🇯🇵 日本語 (Japan)</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <!-- Formulario para crear publicaciones -->
+        <div class="post-box">
+            <textarea id="postText" placeholder="Comparte tu opinión con el mundo..."></textarea>
+            <div class="post-actions">
+                <div class="media-inputs">
+                    <label for="imageInput">📷 Imagen</label>
+                    <input type="file" id="imageInput" accept="image/*">
+
+                    <label for="audioInput">🎵 Audio/Música</label>
+                    <input type="file" id="audioInput" accept="audio/*">
+                </div>
+                <button class="btn-publish" onclick="createPost()">Publicar</button>
+            </div>
+            <div id="file-info" style="margin-top: 10px; font-size: 0.85rem; color: #555;"></div>
+        </div>
+
+        <!-- Muro de publicaciones -->
+        <div class="feed" id="feedContainer">
+            <!-- Publicación de ejemplo -->
+            <div class="post-card" data-original="¡Hola mundo! Qué gran día para conectar personas de todos los rincones del planeta.">
+                <div class="post-header">
+                    <span>Usuario Anónimo • 🇯🇵 Japón</span>
+                    <span>Hace 5 min</span>
+                </div>
+                <div class="post-content">¡Hola mundo! Qué gran día para conectar personas de todos los rincones del planeta.</div>
+                <div class="translation-tag">🌐 Traducido automáticamente al Español</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedImage = null;
+        let selectedAudio = null;
+
+        // Capturar archivos multimedia seleccionados
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedImage = URL.createObjectURL(e.target.files[0]);
+                document.getElementById('file-info').innerText = "Imagen cargada: " + e.target.files[0].name;
+            }
+        });
+
+        document.getElementById('audioInput').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedAudio = URL.createObjectURL(e.target.files[0]);
+                document.getElementById('file-info').innerText += " | Audio cargado: " + e.target.files[0].name;
+            }
+        });
+
+        function createPost() {
+            const text = document.getElementById('postText').value.trim();
+            if(!text && !selectedImage && !selectedAudio) {
+                alert("Por favor escribe algo o añade un archivo multimedia.");
+                return;
+            }
+
+            const feed = document.getElementById('feedContainer');
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            postCard.setAttribute('data-original', text);
+
+            let mediaHTML = '';
+            if(selectedImage) {
+                mediaHTML += `<div class="post-media"><img src="${selectedImage}" alt="Imagen adjunta"></div>`;
+            }
+            if(selectedAudio) {
+                mediaHTML += `<div class="post-media"><audio controls src="${selectedAudio}"></audio></div>`;
+            }
+
+            const currentLang = document.getElementById('countrySelect').value;
+            let displayText = text;
+            let translationBadge = '';
+
+            if (currentLang !== 'es' && text) {
+                displayText = simulateTranslation(text, currentLang);
+                translationBadge = `<div class="translation-tag">🌐 Traducido automáticamente a (${currentLang.toUpperCase()})</div>`;
+            }
+
+            postCard.innerHTML = `
+                <div class="post-header">
+                    <span>Tú • 🌍 Global</span>
+                    <span>Justo ahora</span>
+                </div>
+                <div class="post-content">${displayText}</div>
+                ${mediaHTML}
+                ${translationBadge}
+            `;
+
+            feed.prepend(postCard);
+
+            // Limpiar formulario
+            document.getElementById('postText').value = '';
+            document.getElementById('imageInput').value = '';
+            document.getElementById('audioInput').value = '';
+            document.getElementById('file-info').innerText = '';
+            selectedImage = null;
+            selectedAudio = null;
+        }
+
+        // Simulador simple de traducción para demostración
+        function simulateTranslation(text, lang) {
+            const translations = {
+                'en': `[Translated to English]: ${text}`,
+                'fr': `[Traduit en français]: ${text}`,
+                'ja': `[日本語に翻訳]: ${text}`
+            };
+            return translations[lang] || text;
+        }
+
+        // Cambiar idioma de la interfaz / traducciones simuladas
+        function changeLanguage() {
+            const lang = document.getElementById('countrySelect').value;
+            const posts = document.querySelectorAll('.post-card');
+
+            posts.forEach(post => {
+                const originalText = post.getAttribute('data-original');
+                const contentDiv = post.querySelector('.post-content');
+                let badge = post.querySelector('.translation-tag');
+
+                if (lang === 'es') {
+                    contentDiv.innerText = originalText;
+                    if (badge) badge.remove();
+                } else {
+                    contentDiv.innerText = simulateTranslation(originalText, lang);
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.className = 'translation-tag';
+                        post.appendChild(badge);
+                    }
+                    badge.innerText = `🌐 Traducido automáticamente al (${lang.toUpperCase()})`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
