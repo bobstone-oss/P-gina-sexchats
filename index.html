@@ -23,8 +23,14 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(243, 244, 246, 0.88), rgba(243, 244, 246, 0.88)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text-color);
             line-height: 1.6;
+            transition: background-image 1s ease-in-out;
+            min-height: 100vh;
         }
 
         header {
@@ -297,6 +303,25 @@
             };
             return translations[lang] || text;
         }
+
+        // Lista de fondos de paisajes bonitos y naturaleza
+        const natureBackgrounds = [
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80', // Valle y montañas
+            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80', // Bosque y niebla
+            'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1920&q=80', // Montañas y cielo
+            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80', // Rayos de sol en bosque
+            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1920&q=80'  // Campo verde al atardecer
+        ];
+
+        let currentBgIndex = 0;
+        function updateNatureBackground() {
+            currentBgIndex = (currentBgIndex + 1) % natureBackgrounds.length;
+            const nextImg = natureBackgrounds[currentBgIndex];
+            document.body.style.backgroundImage = `linear-gradient(rgba(243, 244, 246, 0.88), rgba(243, 244, 246, 0.88)), url('${nextImg}')`;
+        }
+
+        // Rotar el paisaje cada 20 minutos (20 * 60 * 1000 ms)
+        setInterval(updateNatureBackground, 20 * 60 * 1000);
 
         // Cambiar idioma de la interfaz / traducciones simuladas
         function changeLanguage() {
